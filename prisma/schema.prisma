@@ -1,0 +1,164 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum InterviewStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum QuestionType {
+  TECHNICAL
+  BEHAVIORAL
+  SITUATIONAL
+}
+
+model User {
+  id        String   @id @default(uuid())
+  clerkId   String   @unique
+  email     String   @unique
+  name      String?
+  imageUrl  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  resumes         Resume[]
+  jobDescriptions JobDescription[]
+  interviews      Interview[]
+
+  @@index([clerkId])
+  @@index([email])
+}
+
+model Resume {
+  id         String   @id @default(uuid())
+  userId     String
+  fileName   String
+  s3Key      String
+  s3Url      String
+  parsedText String?  @db.Text
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  atsScores  ATSScore[]
+  interviews Interview[]
+
+  @@index([userId])
+}
+
+model JobDescription {
+  id           String   @id @default(uuid())
+  userId       String
+  title        String
+  company      String
+  description  String   @db.Text
+  requirements String[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  atsScores  ATSScore[]
+  interviews Interview[]
+
+  @@index([userId])
+}
+
+model Interview {
+  id               String          @id @default(uuid())
+  userId           String
+  resumeId         String
+  jobDescriptionId String
+  status           InterviewStatus @default(PENDING)
+  totalScore       Float?
+  duration         Int? // Duration in seconds
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  user           User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resume         Resume              @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  jobDescription JobDescription      @relation(fields: [jobDescriptionId], references: [id], onDelete: Cascade)
+  questions      InterviewQuestion[]
+  feedback       Feedback?
+
+  @@index([userId])
+  @@index([resumeId])
+  @@index([jobDescriptionId])
+}
+
+model InterviewQuestion {
+  id           String       @id @default(uuid())
+  interviewId  String
+  questionText String       @db.Text
+  questionType QuestionType
+  orderIndex   Int
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  interview Interview        @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+  answer    InterviewAnswer?
+
+  @@index([interviewId])
+}
+
+model InterviewAnswer {
+  id           String   @id @default(uuid())
+  questionId   String   @unique
+  answerText   String?  @db.Text
+  audioS3Key   String?
+  score        Float?
+  feedback     String?  @db.Text
+  strengths    String[]
+  improvements String[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  question InterviewQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([questionId])
+}
+
+model ATSScore {
+  id               String   @id @default(uuid())
+  resumeId         String
+  jobDescriptionId String
+  overallScore     Float
+  keywordScore     Float
+  formatScore      Float
+  experienceScore  Float
+  missingKeywords  String[]
+  matchedKeywords  String[]
+  suggestions      Json? // Storing structured suggestions
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  resume         Resume         @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  jobDescription JobDescription @relation(fields: [jobDescriptionId], references: [id], onDelete: Cascade)
+
+  @@unique([resumeId, jobDescriptionId])
+  @@index([resumeId])
+  @@index([jobDescriptionId])
+}
+
+model Feedback {
+  id                 String   @id @default(uuid())
+  interviewId        String   @unique
+  overallScore       Float
+  summary            String   @db.Text
+  strengths          Json?
+  areasToImprove     Json?
+  communicationScore Float
+  technicalScore     Float
+  confidenceScore    Float
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  interview Interview @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+
+  @@index([interviewId])
+}
