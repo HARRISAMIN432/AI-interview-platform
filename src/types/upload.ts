@@ -1,62 +1,54 @@
-// ─── Upload Types ──────────────────────────────────────────────────────────
+// src/lib/validators/upload.ts
 
-export interface UploadMetadata {
-  fileName: string;
-  s3Key: string;
-  s3Url: string;
-  fileSize: number;
-}
+import { z } from "zod";
 
-export interface PresignedUrlResponse {
-  uploadUrl: string;
-  key: string;
-  s3Url: string;
-}
+// ─── Constants ─────────────────────────────────────────────────────────────
+export const ALLOWED_MIME_TYPES = ["application/pdf"] as const;
+export const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
+export const MAX_FILE_SIZE_LABEL = "10MB";
 
-// ─── PDF Parse Types ───────────────────────────────────────────────────────
+// ─── Presigned URL Request Schema ──────────────────────────────────────────
+export const PresignedUrlRequestSchema = z.object({
+  fileName: z
+    .string()
+    .min(1, "File name is required")
+    .max(255, "File name too long")
+    .refine(
+      (name) => name.toLowerCase().endsWith(".pdf"),
+      "Only PDF files are accepted",
+    ),
+  fileType: z
+    .string()
+    .refine(
+      (type): type is (typeof ALLOWED_MIME_TYPES)[number] =>
+        (ALLOWED_MIME_TYPES as readonly string[]).includes(type),
+      `File type must be one of: ${ALLOWED_MIME_TYPES.join(", ")}`,
+    ),
+  fileSize: z
+    .number()
+    .int("File size must be an integer")
+    .positive("File size must be positive")
+    .max(
+      MAX_FILE_SIZE_BYTES,
+      `File size must not exceed ${MAX_FILE_SIZE_LABEL}`,
+    ),
+});
 
-export type ParseErrorCode =
-  | "EMPTY_TEXT"
-  | "SCANNED_PDF"
-  | "PARSE_FAILED"
-  | "INVALID_PDF"
-  | "TEXT_TOO_SHORT";
+export type PresignedUrlRequest = z.infer<typeof PresignedUrlRequestSchema>;
 
-export interface ParseStats {
-  pageCount: number;
-  charCount: number;
-  wordCount: number;
-}
+// ─── Save Resume Metadata Schema ──────────────────────────────────────────
+export const SaveResumeMetadataSchema = z.object({
+  fileName: z.string().min(1).max(255),
+  s3Key: z.string().min(1),
+  s3Url: z.string().url(),
+  fileSize: z.number().int().positive().max(MAX_FILE_SIZE_BYTES),
+});
 
-export interface ParseSuccessResponse {
-  success: true;
-  resumeId: string;
-  stats: ParseStats;
-}
+export type SaveResumeMetadata = z.infer<typeof SaveResumeMetadataSchema>;
 
-export interface ParseFailureResponse {
-  success: false;
-  error: {
-    code: ParseErrorCode;
-    message: string;
-  };
-}
+// ─── Parse Resume Schema - CORRECTED SYNTAX ────────────────────────────────
+export const ParseResumeSchema = z.object({
+  resumeId: z.string().min(1, "resumeId cannot be empty"),
+});
 
-export type ParseResponse = ParseSuccessResponse | ParseFailureResponse;
-
-// ─── Resume ────────────────────────────────────────────────────────────────
-
-/**
- * Lightweight resume DTO — returned from server actions to client components.
- * Omits heavy fields (parsedText) to keep payloads small.
- */
-export interface ResumeListItem {
-  id: string;
-  fileName: string;
-  s3Key: string;
-  s3Url: string;
-  atsScore: number | null;
-  parsedText: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-}
+export type ParseResumeInput = z.infer<typeof ParseResumeSchema>;
