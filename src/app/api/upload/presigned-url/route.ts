@@ -4,22 +4,6 @@ import { ZodError } from "zod";
 import { PresignedUrlRequestSchema } from "@/lib/validators/upload";
 import { prepareResumeUpload } from "@/services/upload.service";
 
-/**
- * POST /api/upload/presigned-url
- *
- * Generates a presigned S3 upload URL for authenticated users.
- *
- * Request body:
- *   { fileName: string, fileType: string, fileSize: number }
- *
- * Response:
- *   { uploadUrl: string, key: string, s3Url: string }
- *
- * The client should:
- *   1. Call this endpoint to get the presigned URL
- *   2. PUT the file directly to uploadUrl (with Content-Type header)
- *   3. Call /api/upload/confirm with the key to save metadata
- */
 export async function POST(req: NextRequest) {
   try {
     // ── Auth ──────────────────────────────────────────────────────────────
