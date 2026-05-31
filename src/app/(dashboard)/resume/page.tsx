@@ -20,9 +20,9 @@ export const metadata: Metadata = {
 
 // ─── Page props ───────────────────────────────────────────────────────────
 
-interface ResumePageProps {
-  searchParams: { id?: string };
-}
+type ResumePageProps = {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>; // ✅ Fixed: Promise
+};
 
 // ─── Left panel skeleton ──────────────────────────────────────────────────
 
@@ -82,8 +82,8 @@ export default async function ResumePage({ searchParams }: ResumePageProps) {
   const { userId } = await auth();
   if (!userId) redirect("/sign-in");
 
-  const params = await searchParams;
-  const selectedId = params.id ?? null;
+  const params = await searchParams; // ✅ Now this works because searchParams is a Promise
+  const selectedId = params?.id ?? null;
 
   // Parallel fetch — resumes list + jobs for the selector
   const [resumes, jobs] = await Promise.all([
@@ -92,9 +92,9 @@ export default async function ResumePage({ searchParams }: ResumePageProps) {
   ]);
 
   // Fetch detail only if a resume is selected
-  const selectedResume = selectedId
-    ? await getResumeDetail(selectedId, userId)
-    : null;
+  const id = typeof selectedId === "string" ? selectedId : selectedId?.[0];
+
+  const selectedResume = id ? await getResumeDetail(id, userId) : null;
 
   // If ?id= doesn't match any resume, fall through gracefully (selectedResume = null)
 
