@@ -9,6 +9,7 @@ import {
   type JobDescriptionFormInput,
   type JdMetadata,
 } from "@/lib/validators/job-description";
+import { applyRateLimit } from "@/lib/rate-limit";
 import type { JobDescription } from "@prisma/client";
 
 export type JobDescriptionListItem = {
@@ -93,11 +94,22 @@ async function runAtsForAllResumes(
 
 export async function extractJobDescriptionFromText(
   rawText: string,
+  clerkUserId?: string,
 ): Promise<
   | { success: true; data: JobDescriptionFormInput }
   | { success: false; error: string }
 > {
   try {
+    if (clerkUserId) {
+      const rateLimit = applyRateLimit(`ai:${clerkUserId}`, 30, 60 * 60 * 1000);
+      if (!rateLimit.success) {
+        return {
+          success: false,
+          error: "Too many AI requests. Please try again later.",
+        };
+      }
+    }
+
     const parsed = ExtractJdSchema.parse({ rawText });
     const metadata = await extractJobDescriptionMetadata(parsed.rawText);
     return {

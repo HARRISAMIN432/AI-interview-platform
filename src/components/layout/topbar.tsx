@@ -19,6 +19,37 @@ const ROUTE_LABELS: Record<string, string> = {
 };
 
 function getBreadcrumbs(pathname: string) {
+  if (pathname.startsWith("/resume/job-descriptions")) {
+    return [
+      { label: "Resumes", href: "/resume", isLast: false },
+      { label: "Job Board", href: pathname, isLast: true },
+    ];
+  }
+
+  if (pathname.startsWith("/feedback/")) {
+    const id = pathname.split("/")[2];
+    return [
+      { label: "Interviews", href: "/interview", isLast: false },
+      {
+        label: "Feedback Report",
+        href: `/feedback/${id}`,
+        isLast: true,
+      },
+    ];
+  }
+
+  if (pathname.includes("/interview/") && pathname.endsWith("/summary")) {
+    const id = pathname.split("/")[2];
+    return [
+      { label: "Interviews", href: "/interview", isLast: false },
+      {
+        label: "Summary",
+        href: `/interview/${id}/summary`,
+        isLast: true,
+      },
+    ];
+  }
+
   const segments = pathname.split("/").filter(Boolean);
   return segments.map((seg, i) => ({
     label: ROUTE_LABELS[seg] ?? seg.charAt(0).toUpperCase() + seg.slice(1),

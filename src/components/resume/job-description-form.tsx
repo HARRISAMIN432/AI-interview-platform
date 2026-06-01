@@ -73,7 +73,7 @@ export function JobDescriptionForm({
     if (!rawPaste || rawPaste.length < 80) return;
 
     startExtract(async () => {
-      const result = await extractJobDescriptionFromText(rawPaste);
+      const result = await extractJobDescriptionFromText(rawPaste, clerkUserId);
       if (!result.success) {
         alert(result.error);
         return;

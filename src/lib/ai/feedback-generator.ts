@@ -35,11 +35,7 @@ export const InterviewFeedbackReportSchema = z.object({
   strengths: z.array(StrengthItemSchema).min(1).max(6),
   areasToImprove: z.array(AreaToImproveItemSchema).min(1).max(6),
   studyPlan: z.array(StudyPlanItemSchema).min(1).max(8),
-  interviewReadiness: z.enum([
-    "ready",
-    "almost-ready",
-    "needs-preparation",
-  ]),
+  interviewReadiness: z.enum(["ready", "almost-ready", "needs-preparation"]),
 });
 
 export type InterviewFeedbackReport = z.infer<
@@ -104,7 +100,9 @@ export async function generateInterviewFeedback(
         q.questionText.slice(0, 600),
         `Answer: ${answer?.answerText?.slice(0, 800) ?? "(no answer)"}`,
         `Score: ${answer?.score ?? "N/A"}`,
-        answer?.feedback ? `Evaluator note: ${answer.feedback.slice(0, 400)}` : "",
+        answer?.feedback
+          ? `Evaluator note: ${answer.feedback.slice(0, 400)}`
+          : "",
       ].join("\n");
     })
     .join("\n\n");
@@ -163,7 +161,8 @@ Synthesize holistic feedback from all answers. Scores are 0-100 integers.
   let parsed: unknown;
   try {
     parsed = JSON.parse(stripJsonFences(rawText));
-  } catch {
+  } catch (e) {
+    console.log(e);
     throw new Error(
       `[FeedbackGenerator] Failed to parse JSON. Raw: ${rawText.slice(0, 200)}`,
     );

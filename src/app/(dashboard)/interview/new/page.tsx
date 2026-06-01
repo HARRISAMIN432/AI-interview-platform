@@ -1,8 +1,10 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import prisma from "@/lib/db/prisma";
 import { InterviewSetupForm } from "@/components/interview/interview-setup-form";
+import { HeroSkeleton } from "@/components/shared/skeleton";
 
 export const metadata: Metadata = {
   title: "New Interview",
@@ -31,10 +33,7 @@ async function getSetupData(clerkUserId: string) {
   return { resumes, jobs };
 }
 
-export default async function NewInterviewPage() {
-  const { userId } = await auth();
-  if (!userId) redirect("/sign-in");
-
+async function NewInterviewContent({ userId }: { userId: string }) {
   const { resumes, jobs } = await getSetupData(userId);
 
   return (
@@ -76,5 +75,16 @@ export default async function NewInterviewPage() {
         <InterviewSetupForm resumes={resumes} jobs={jobs} />
       </div>
     </div>
+  );
+}
+
+export default async function NewInterviewPage() {
+  const { userId } = await auth();
+  if (!userId) redirect("/sign-in");
+
+  return (
+    <Suspense fallback={<HeroSkeleton />}>
+      <NewInterviewContent userId={userId} />
+    </Suspense>
   );
 }

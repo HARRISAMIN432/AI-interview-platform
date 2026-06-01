@@ -14,26 +14,15 @@ const GeneratedQuestionSchema = z.object({
 
 const GeneratedQuestionsArraySchema = z.array(GeneratedQuestionSchema).min(1);
 
-// ─── Generator ────────────────────────────────────────────────────────────
-
-/**
- * Calls Gemini to generate interview questions tailored to the candidate and role.
- *
- * Uses gemini-1.5-flash for speed (question generation is latency-sensitive
- * because the user is waiting on the setup screen).
- *
- * @returns Array of validated GeneratedQuestion objects
- * @throws Error with descriptive message on AI or parse failure
- */
 export async function generateInterviewQuestions(
   config: InterviewConfig,
 ): Promise<GeneratedQuestion[]> {
   const model = getGeminiClient().getGenerativeModel({
-    model: "gemini-1.5-flash",
+    model: "gemini-2.5-flash",
     generationConfig: {
       responseMimeType: "application/json",
-      temperature: 0.7, // Some creativity for varied questions
-      maxOutputTokens: 2048,
+      temperature: 0.7,
+      maxOutputTokens: 4096,
     },
   });
 
@@ -62,7 +51,9 @@ export async function generateInterviewQuestions(
   let parsed: unknown;
   try {
     parsed = JSON.parse(cleaned);
-  } catch {
+  } catch (e) {
+    console.log(e);
+
     throw new Error(
       `[QuestionGenerator] Failed to parse response as JSON. Raw: ${cleaned.slice(0, 300)}`,
     );

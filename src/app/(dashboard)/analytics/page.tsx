@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
-import { getUserAnalytics } from "@/lib/actions/analytics";
+import { cacheUserAnalytics } from "@/lib/cache";
 import { StatsOverview } from "@/components/analytics/stats-overview";
 import { ScoreTrendChart } from "@/components/analytics/score-trend-chart";
 import { SkillRadar } from "@/components/analytics/skill-radar";
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 };
 
 async function AnalyticsContent({ clerkUserId }: { clerkUserId: string }) {
-  const analytics = await getUserAnalytics(clerkUserId);
+  const analytics = await cacheUserAnalytics(clerkUserId);
 
   if (!analytics) {
     return (

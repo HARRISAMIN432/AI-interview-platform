@@ -1,29 +1,41 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
 import prisma from "@/lib/db/prisma";
 import { getInterviewsForUser } from "@/lib/actions/interview";
-import { getUserAnalytics } from "@/lib/actions/analytics";
+import { cacheUserAnalytics } from "@/lib/cache";
 import { QuickActions } from "@/components/shared/quick-actions";
 import { RecentInterviews } from "@/components/shared/recent-interviews";
 import { PerformanceSummary } from "@/components/shared/performance-summary";
 import { ScoreRing } from "@/components/resume/score-ring";
+import { HeroSkeleton, StatCardSkeleton } from "@/components/shared/skeleton";
 import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Dashboard",
 };
 
-export default async function DashboardPage() {
-  const { userId } = await auth();
-  if (!userId) redirect("/sign-in");
+function DashboardSkeleton() {
+  return (
+    <div className="space-y-8">
+      <HeroSkeleton />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {[...Array(3)].map((_, i) => (
+          <StatCardSkeleton key={i} />
+        ))}
+      </div>
+    </div>
+  );
+}
 
+async function DashboardContent({ userId }: { userId: string }) {
   const [clerkUser, interviews, analytics, resumeStats, latestAts] =
     await Promise.all([
       currentUser(),
       getInterviewsForUser(userId, 5),
-      getUserAnalytics(userId),
+      cacheUserAnalytics(userId),
       prisma.user.findUnique({
         where: { clerkId: userId },
         select: {
@@ -152,5 +164,16 @@ export default async function DashboardPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default async function DashboardPage() {
+  const { userId } = await auth();
+  if (!userId) redirect("/sign-in");
+
+  return (
+    <Suspense fallback={<DashboardSkeleton />}>
+      <DashboardContent userId={userId} />
+    </Suspense>
   );
 }

@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { ZodError } from "zod";
+import { enforceAiRateLimit } from "@/lib/api/ai-rate-limit";
 import { ATSScoringRequestSchema } from "@/lib/validators/ats";
 import { scoreResumeAgainstJob } from "@/services/ats-scoring.service";
 import {
@@ -15,6 +16,9 @@ export async function POST(req: NextRequest) {
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const rateLimited = enforceAiRateLimit(userId);
+    if (rateLimited) return rateLimited;
 
     // ── Parse body ────────────────────────────────────────────────────────
     let body: unknown;

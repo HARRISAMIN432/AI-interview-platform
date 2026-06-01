@@ -47,7 +47,8 @@ export async function runAtsScoring(
   let parsed: unknown;
   try {
     parsed = JSON.parse(cleaned);
-  } catch {
+  } catch (e) {
+    console.log(e);
     throw new Error(
       `[AtsScorer] Failed to parse Gemini response as JSON. Raw: ${cleaned.slice(0, 200)}`,
     );

@@ -1,6 +1,7 @@
 "use server";
 
 import prisma from "@/lib/db/prisma";
+import { applyRateLimit } from "@/lib/rate-limit";
 import {
   generateInterviewFeedback,
   type InterviewFeedbackReport,
@@ -105,6 +106,14 @@ export async function generateFeedbackForInterview(
   });
   if (!user) {
     return { success: false, error: "User not found" };
+  }
+
+  const rateLimit = applyRateLimit(`ai:${clerkUserId}`, 30, 60 * 60 * 1000);
+  if (!rateLimit.success) {
+    return {
+      success: false,
+      error: "Too many AI requests. Please try again later.",
+    };
   }
 
   const interview = await prisma.interview.findFirst({

@@ -250,8 +250,9 @@ export function Sidebar() {
         {/* Upgrade button */}
         {!collapsed && (
           <div className="mt-3 px-1">
-            <button
-              className="w-full rounded-xl py-2.5 text-sm font-bold transition-all duration-150 active:scale-[0.97]"
+            <Link
+              href="/support"
+              className="block w-full text-center rounded-xl py-2.5 text-sm font-bold transition-all duration-150 active:scale-[0.97]"
               style={{
                 fontFamily: "var(--font-syne)",
                 background: "linear-gradient(135deg, #00e5a0, #00916a)",
@@ -261,7 +262,7 @@ export function Sidebar() {
               }}
             >
               Upgrade to Pro
-            </button>
+            </Link>
           </div>
         )}
 

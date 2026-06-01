@@ -1,5 +1,8 @@
 import { getEvaluationModel } from "@/lib/ai/gemini";
-import { JdMetadataSchema, type JdMetadata } from "@/lib/validators/job-description";
+import {
+  JdMetadataSchema,
+  type JdMetadata,
+} from "@/lib/validators/job-description";
 
 export async function extractJobDescriptionMetadata(
   rawText: string,
@@ -45,7 +48,8 @@ ${trimmed}
   let parsed: unknown;
   try {
     parsed = JSON.parse(cleaned);
-  } catch {
+  } catch (e) {
+    console.log(e);
     throw new Error(
       `[JdExtractor] Failed to parse JSON. Raw: ${cleaned.slice(0, 200)}`,
     );

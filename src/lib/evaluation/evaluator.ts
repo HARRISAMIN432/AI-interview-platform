@@ -40,7 +40,8 @@ async function parseGeminiJson<T>(
   let parsed: unknown;
   try {
     parsed = JSON.parse(stripJsonFences(rawText));
-  } catch {
+  } catch (e) {
+    console.log(e);
     throw new Error(
       `[${label}] Failed to parse response as JSON. Raw: ${rawText.slice(0, 200)}`,
     );
@@ -77,7 +78,11 @@ export async function evaluateAnswer(
     throw new Error(`[AnswerEvaluator] Gemini API call failed: ${message}`);
   }
 
-  return parseGeminiJson(rawText, AnswerEvaluationResultSchema, "AnswerEvaluator");
+  return parseGeminiJson(
+    rawText,
+    AnswerEvaluationResultSchema,
+    "AnswerEvaluator",
+  );
 }
 
 export async function evaluateOverallFeedback(
