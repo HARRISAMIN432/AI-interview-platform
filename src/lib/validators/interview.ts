@@ -17,8 +17,8 @@ export type QuestionCount = z.infer<typeof QuestionCountSchema>;
 // ─── Create Interview ──────────────────────────────────────────────────────
 
 export const CreateInterviewSchema = z.object({
-  resumeId: z.string().cuid("Invalid resume ID"),
-  jobDescriptionId: z.string().cuid("Invalid job description ID"),
+  resumeId: z.string().uuid("Invalid resume ID"),
+  jobDescriptionId: z.string().uuid("Invalid job description ID"),
   interviewType: InterviewTypeSchema,
   difficulty: DifficultySchema,
   questionCount: QuestionCountSchema,
@@ -33,7 +33,7 @@ export const CreateInterviewSchema = z.object({
 export type CreateInterviewInput = z.infer<typeof CreateInterviewSchema>;
 
 export const SubmitAnswerSchema = z.object({
-  questionId: z.string().cuid("Invalid question ID"),
+  questionId: z.string().uuid("Invalid question ID"),
   answerText: z
     .string()
     .min(1, "Answer cannot be empty")

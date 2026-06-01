@@ -160,6 +160,7 @@ export function InterviewSetupForm({ resumes, jobs }: InterviewSetupFormProps) {
 
   // ── Submit ───────────────────────────────────────────────────────────
   const onSubmit = handleSubmit((data) => {
+    console.log("✅ onSubmit triggered with data:", data);
     setApiError(null);
     startTransition(async () => {
       try {
@@ -737,7 +738,6 @@ export function InterviewSetupForm({ resumes, jobs }: InterviewSetupFormProps) {
                 <ChevronLeft size={14} />
                 Back
               </button>
-
               <button
                 type="submit"
                 disabled={isPending}

@@ -27,6 +27,7 @@ export async function runAtsScoring(
 
   try {
     const result = await model.generateContent(prompt);
+    console.log("finishReason:", result.response.candidates?.[0]?.finishReason);
     rawText = result.response.text();
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);

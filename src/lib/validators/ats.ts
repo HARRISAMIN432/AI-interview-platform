@@ -1,9 +1,8 @@
 import { z } from "zod";
 
 // ─── Request: score a resume against a job description ────────────────────
-// Changed from .cuid() to .uuid() for PostgreSQL UUID format
 export const ATSScoringRequestSchema = z.object({
-  resumeId: z.string().uuid("Invalid resume ID - expected UUID format"),
+  resumeId: z.string().min(1, "ID is required"),
   jobDescriptionId: z
     .string()
     .uuid("Invalid job description ID - expected UUID format"),

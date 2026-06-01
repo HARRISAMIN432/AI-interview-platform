@@ -1,3 +1,6 @@
+export const maxDuration = 60;
+export const dynamic = "force-dynamic";
+
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { SubmitAnswerSchema } from "@/lib/validators/interview";

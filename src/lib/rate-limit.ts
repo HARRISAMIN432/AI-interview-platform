@@ -19,10 +19,6 @@ export interface RateLimitResult {
   resetAt: number;
 }
 
-/**
- * Sliding-window rate limiter (in-memory).
- * Suitable for single-instance deployments; use Redis for multi-instance production.
- */
 export function applyRateLimit(
   identifier: string,
   limit: number,

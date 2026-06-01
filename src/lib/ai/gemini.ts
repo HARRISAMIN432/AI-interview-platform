@@ -22,7 +22,7 @@ export function getAtsModel() {
     generationConfig: {
       responseMimeType: "application/json",
       temperature: 0.1,
-      maxOutputTokens: 1024,
+      maxOutputTokens: 8196,
     },
   });
 }
@@ -34,7 +34,7 @@ export function getEvaluationModel() {
     generationConfig: {
       responseMimeType: "application/json",
       temperature: 0.2,
-      maxOutputTokens: 1536,
+      maxOutputTokens: 8196,
     },
   });
 }

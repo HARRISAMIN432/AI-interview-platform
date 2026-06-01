@@ -44,9 +44,8 @@ export const SaveResumeMetadataSchema = z.object({
 
 export type SaveResumeMetadata = z.infer<typeof SaveResumeMetadataSchema>;
 
-// ─── Parse Resume Schema - Changed from .cuid() to .uuid() ─────────────────
 export const ParseResumeSchema = z.object({
-  resumeId: z.string().uuid("Invalid resume ID - expected UUID format"),
+  resumeId: z.string().min(1, "ID is required"),
 });
 
 export type ParseResumeInput = z.infer<typeof ParseResumeSchema>;
