@@ -29,18 +29,20 @@ export function InterviewConductor({
 
   const handleComplete = useCallback(
     async (_answers: SessionAnswer[], totalSeconds: number) => {
-      // Trigger completion flow — redirect to summary (Module 12)
-      // Module 11 (evaluation) is triggered server-side after answers are saved
       try {
-        await fetch(`/api/interview/${interview.id}/complete`, {
+        const res = await fetch(`/api/interview/${interview.id}/complete`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ totalSeconds }),
         });
-      } catch {
-        // Non-fatal
+        if (!res.ok) {
+          console.error("[InterviewConductor] Complete failed:", await res.text());
+        }
+      } catch (err) {
+        console.error("[InterviewConductor] Complete request failed:", err);
       }
       router.push(`/interview/${interview.id}/summary`);
+      router.refresh();
     },
     [interview.id, router],
   );
@@ -163,7 +165,7 @@ export function InterviewConductor({
           Interview complete!
         </h2>
         <p className="text-sm" style={{ color: "#4a6a7a" }}>
-          Redirecting to your summary…
+          Evaluating your answers — this may take a moment…
         </p>
       </div>
     );

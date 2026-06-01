@@ -26,3 +26,15 @@ export function getAtsModel() {
     },
   });
 }
+
+/** Low-temperature model for per-answer and overall interview evaluation. */
+export function getEvaluationModel() {
+  return getGeminiClient().getGenerativeModel({
+    model: "gemini-2.5-flash",
+    generationConfig: {
+      responseMimeType: "application/json",
+      temperature: 0.2,
+      maxOutputTokens: 1536,
+    },
+  });
+}
