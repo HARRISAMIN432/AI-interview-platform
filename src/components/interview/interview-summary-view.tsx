@@ -180,6 +180,18 @@ export function InterviewSummaryView({ interview }: InterviewSummaryViewProps) {
       {/* Actions */}
       <div className="flex flex-wrap items-center gap-3 pt-2">
         <Link
+          href={`/feedback/${interview.id}`}
+          className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold transition-all active:scale-[0.97]"
+          style={{
+            background: "#00c98a",
+            color: "#050d14",
+            fontFamily: "var(--font-syne)",
+            boxShadow: "0 4px 16px rgba(0,201,138,0.25)",
+          }}
+        >
+          View Full Report
+        </Link>
+        <Link
           href="/interview"
           className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium transition-colors"
           style={{

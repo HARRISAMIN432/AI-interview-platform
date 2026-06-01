@@ -23,7 +23,7 @@ const NAV_ITEMS = [
   { label: "Resumes", href: "/resume", icon: FileText },
   { label: "Interviews", href: "/interview", icon: Video },
   { label: "Analytics", href: "/analytics", icon: BarChart2 },
-  { label: "Job Board", href: "/job-descriptions", icon: Briefcase },
+  { label: "Job Board", href: "/resume/job-descriptions", icon: Briefcase },
   { label: "Settings", href: "/settings", icon: Settings },
   { label: "Support", href: "/support", icon: HelpCircle },
 ];
@@ -34,6 +34,16 @@ export function MobileNav() {
 
   const isActive = (href: string) => {
     if (href === "/dashboard") return pathname === "/dashboard";
+    if (href === "/resume/job-descriptions") {
+      return pathname.startsWith("/resume/job-descriptions");
+    }
+    if (href === "/resume") {
+      return (
+        pathname === "/resume" ||
+        (pathname.startsWith("/resume/") &&
+          !pathname.startsWith("/resume/job-descriptions"))
+      );
+    }
     return pathname.startsWith(href);
   };
 

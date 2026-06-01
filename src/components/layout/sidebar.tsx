@@ -41,7 +41,7 @@ const NAV_ITEMS = [
   },
   {
     label: "Job Board",
-    href: "/job-descriptions",
+    href: "/resume/job-descriptions",
     icon: Briefcase,
   },
 ];
@@ -57,6 +57,16 @@ export function Sidebar() {
 
   const isActive = (href: string) => {
     if (href === "/dashboard") return pathname === "/dashboard";
+    if (href === "/resume/job-descriptions") {
+      return pathname.startsWith("/resume/job-descriptions");
+    }
+    if (href === "/resume") {
+      return (
+        pathname === "/resume" ||
+        (pathname.startsWith("/resume/") &&
+          !pathname.startsWith("/resume/job-descriptions"))
+      );
+    }
     return pathname.startsWith(href);
   };
 

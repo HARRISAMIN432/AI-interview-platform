@@ -66,7 +66,7 @@ export function ScoreJobSelector({
         <p className="text-xs" style={{ color: "#3d6070" }}>
           No job descriptions saved.{" "}
           <a
-            href="/job-descriptions"
+            href="/resume/job-descriptions"
             className="underline"
             style={{ color: "#00e5a0" }}
           >
