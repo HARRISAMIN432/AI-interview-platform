@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 // ─── Page props ───────────────────────────────────────────────────────────
 
 type ResumePageProps = {
-  searchParams?: Promise<Record<string, string | string[] | undefined>>; // ✅ Fixed: Promise
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 };
 
 // ─── Left panel skeleton ──────────────────────────────────────────────────

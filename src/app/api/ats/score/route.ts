@@ -14,7 +14,6 @@ import {
 
 export async function POST(req: NextRequest) {
   try {
-    // ── Auth ──────────────────────────────────────────────────────────────
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -23,7 +22,6 @@ export async function POST(req: NextRequest) {
     const rateLimited = enforceAiRateLimit(userId);
     if (rateLimited) return rateLimited;
 
-    // ── Parse body ────────────────────────────────────────────────────────
     let body: unknown;
     try {
       body = await req.json();
@@ -33,10 +31,9 @@ export async function POST(req: NextRequest) {
 
     const input = ATSScoringRequestSchema.parse(body);
 
-    // ── Force refresh flag ────────────────────────────────────────────────
-    const forceRefresh = req.nextUrl.searchParams.get("refresh") === "true";
+    const searchParams = req.nextUrl.searchParams;
+    const forceRefresh = searchParams.get("refresh") === "true";
 
-    // ── Run scoring pipeline ──────────────────────────────────────────────
     const outcome = await scoreResumeAgainstJob(userId, input, forceRefresh);
 
     if (!outcome.success) {
@@ -85,7 +82,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { searchParams } = req.nextUrl;
+    const searchParams = req.nextUrl.searchParams;
     const resumeId = searchParams.get("resumeId");
     const jobDescriptionId = searchParams.get("jobDescriptionId");
 
@@ -96,13 +93,11 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Return a specific pair score
     if (jobDescriptionId) {
       const score = await getATSScore(resumeId, jobDescriptionId);
       return NextResponse.json({ atsScore: score ?? null }, { status: 200 });
     }
 
-    // Return all scores for a resume
     const scores = await getATSScoresByResume(resumeId);
     return NextResponse.json({ atsScores: scores }, { status: 200 });
   } catch (error) {
