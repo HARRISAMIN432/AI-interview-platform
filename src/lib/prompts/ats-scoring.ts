@@ -12,7 +12,7 @@ export function buildAtsScoringPrompt(
 
   return `You are an expert ATS (Applicant Tracking System) analyzer and career coach. Your task is to evaluate how well a candidate's resume matches a specific job description.
 
-Analyze the resume against the job description and return a JSON object. Do not include any text outside the JSON.
+Analyze the resume against the job description and return a single compact JSON object. Do not include any text outside the JSON. You MUST include every field in the schema below — never stop mid-object.
 
 ## JOB DETAILS
 Title: ${jobTitle}

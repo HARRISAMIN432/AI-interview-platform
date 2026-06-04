@@ -61,15 +61,15 @@ Consider question type:
 - SITUATIONAL: judgment, reasoning, stakeholder awareness, actionable plan
 
 **feedback**: 2-4 sentences of constructive, specific feedback. Be direct but encouraging.
-**strengths**: 2-4 specific things the candidate did well (short phrases).
-**improvements**: 2-4 specific, actionable improvements for this answer.
+**strengths**: JSON array of 2-4 plain strings ONLY (not objects). Example: ["Used a clear STAR structure", "Gave a concrete metric"]
+**improvements**: JSON array of 2-4 plain strings ONLY (not objects). Example: ["Add more technical depth", "Quantify the business impact"]
 
-## REQUIRED JSON
+## REQUIRED JSON (strengths and improvements must be string arrays, never objects)
 {
   "score": <integer 0-100>,
   "feedback": "<string>",
-  "strengths": ["<string>", ...],
-  "improvements": ["<string>", ...]
+  "strengths": ["<plain string>", "<plain string>"],
+  "improvements": ["<plain string>", "<plain string>"]
 }`;
 }
 
@@ -103,9 +103,9 @@ Produce holistic interview feedback based on all answers above.
 
 **summary**: 3-5 sentences summarizing overall performance, readiness for the role, and the single most important focus area.
 
-**strengths**: 3-6 standout strengths demonstrated across the interview (specific, not generic).
+**strengths**: JSON array of 3-6 plain strings ONLY (not objects).
 
-**areasToImprove**: 3-6 priority improvement areas for future interviews.
+**areasToImprove**: JSON array of 3-6 plain strings ONLY (not objects).
 
 **communicationScore** (0-100): Clarity, structure, concision, professionalism of responses.
 

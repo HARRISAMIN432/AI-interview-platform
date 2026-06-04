@@ -1,4 +1,5 @@
 import { getEvaluationModel } from "@/lib/ai/gemini";
+import { parseGeminiJsonResponse } from "@/lib/ai/parse-gemini-json";
 import {
   buildAnswerEvaluationPrompt,
   buildOverallFeedbackPrompt,
@@ -14,49 +15,44 @@ import {
   type OverallFeedbackResult,
 } from "@/lib/validators/evaluation";
 
-function stripJsonFences(raw: string): string {
-  return raw
-    .replace(/^```json\s*/i, "")
-    .replace(/^```\s*/i, "")
-    .replace(/\s*```$/i, "")
-    .trim();
+const MAX_ATTEMPTS = 2;
+
+async function generateRaw(prompt: string): Promise<string> {
+  const model = getEvaluationModel();
+  const result = await model.generateContent(prompt);
+  const finishReason = result.response.candidates?.[0]?.finishReason;
+
+  if (finishReason === "MAX_TOKENS") {
+    throw new Error("Gemini response truncated (MAX_TOKENS)");
+  }
+
+  const rawText = result.response.text();
+  if (!rawText?.trim()) {
+    throw new Error("Gemini returned an empty response");
+  }
+
+  return rawText;
 }
 
-async function parseGeminiJson<T>(
-  rawText: string,
-  schema: {
-    safeParse: (data: unknown) => {
-      success: boolean;
-      data?: T;
-      error?: { flatten: () => { fieldErrors: unknown } };
-    };
-  },
+async function withRetry<T>(
   label: string,
+  fn: () => Promise<T>,
 ): Promise<T> {
-  if (!rawText?.trim()) {
-    throw new Error(`[${label}] Gemini returned an empty response`);
+  let lastError: Error | null = null;
+
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      lastError = err instanceof Error ? err : new Error(String(err));
+      console.warn(`[${label}] Attempt ${attempt}/${MAX_ATTEMPTS}:`, lastError.message);
+      if (attempt < MAX_ATTEMPTS) {
+        await new Promise((r) => setTimeout(r, 400));
+      }
+    }
   }
 
-  let parsed: unknown;
-  try {
-    parsed = JSON.parse(stripJsonFences(rawText));
-  } catch (e) {
-    console.log(e);
-    throw new Error(
-      `[${label}] Failed to parse response as JSON. Raw: ${rawText.slice(0, 200)}`,
-    );
-  }
-
-  const validated = schema.safeParse(parsed);
-  if (!validated.success) {
-    throw new Error(
-      `[${label}] Schema validation failed: ${JSON.stringify(
-        validated.error?.flatten().fieldErrors,
-      )}`,
-    );
-  }
-
-  return validated.data as T;
+  throw lastError ?? new Error(`[${label}] Unknown failure`);
 }
 
 export async function evaluateAnswer(
@@ -66,45 +62,29 @@ export async function evaluateAnswer(
     return buildSkippedAnswerEvaluation();
   }
 
-  const model = getEvaluationModel();
   const prompt = buildAnswerEvaluationPrompt(input);
 
-  let rawText: string;
-  try {
-    const result = await model.generateContent(prompt);
-    rawText = result.response.text();
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    throw new Error(`[AnswerEvaluator] Gemini API call failed: ${message}`);
-  }
-
-  return parseGeminiJson(
-    rawText,
-    AnswerEvaluationResultSchema,
-    "AnswerEvaluator",
-  );
+  return withRetry("AnswerEvaluator", async () => {
+    const rawText = await generateRaw(prompt);
+    return parseGeminiJsonResponse(
+      rawText,
+      AnswerEvaluationResultSchema,
+      "AnswerEvaluator",
+    );
+  });
 }
 
 export async function evaluateOverallFeedback(
   input: OverallFeedbackPromptInput,
 ): Promise<OverallFeedbackResult> {
-  const model = getEvaluationModel();
   const prompt = buildOverallFeedbackPrompt(input);
 
-  let rawText: string;
-  try {
-    const result = await model.generateContent(prompt);
-    rawText = result.response.text();
-  } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    throw new Error(
-      `[OverallFeedbackEvaluator] Gemini API call failed: ${message}`,
+  return withRetry("OverallFeedbackEvaluator", async () => {
+    const rawText = await generateRaw(prompt);
+    return parseGeminiJsonResponse(
+      rawText,
+      OverallFeedbackResultSchema,
+      "OverallFeedbackEvaluator",
     );
-  }
-
-  return parseGeminiJson(
-    rawText,
-    OverallFeedbackResultSchema,
-    "OverallFeedbackEvaluator",
-  );
+  });
 }

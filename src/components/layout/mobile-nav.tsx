@@ -240,7 +240,7 @@ export function MobileNav() {
           })}
         </nav>
 
-        {/* Upgrade CTA */}
+        {/* Upgrade CTA
         <div
           className="px-4 pb-6"
           style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}
@@ -256,7 +256,7 @@ export function MobileNav() {
           >
             Upgrade to Pro
           </button>
-        </div>
+        </div> */}
       </div>
     </>
   );

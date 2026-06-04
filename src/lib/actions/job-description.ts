@@ -1,5 +1,6 @@
 "use server";
 
+import { after } from "next/server";
 import prisma from "@/lib/db/prisma";
 import { extractJobDescriptionMetadata } from "@/lib/ai/jd-extractor";
 import { scoreResumeAgainstJob } from "@/services/ats-scoring.service";
@@ -192,7 +193,7 @@ export async function createJobDescription(
   clerkUserId: string,
   input: JobDescriptionFormInput,
 ): Promise<
-  | { success: true; jobDescription: JobDescription }
+  | { success: true; jobDescription: JobDescription; atsScoringStarted: boolean }
   | { success: false; error: string }
 > {
   const user = await prisma.user.findUnique({
@@ -213,9 +214,15 @@ export async function createJobDescription(
       },
     });
 
-    await runAtsForAllResumes(clerkUserId, jobDescription.id);
+    after(async () => {
+      try {
+        await runAtsForAllResumes(clerkUserId, jobDescription.id);
+      } catch (err) {
+        console.error("[createJobDescription] Background ATS failed:", err);
+      }
+    });
 
-    return { success: true, jobDescription };
+    return { success: true, jobDescription, atsScoringStarted: true };
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     return { success: false, error: message };
@@ -227,7 +234,7 @@ export async function updateJobDescription(
   clerkUserId: string,
   input: JobDescriptionFormInput,
 ): Promise<
-  | { success: true; jobDescription: JobDescription }
+  | { success: true; jobDescription: JobDescription; atsScoringStarted: boolean }
   | { success: false; error: string }
 > {
   const user = await prisma.user.findUnique({
@@ -256,9 +263,15 @@ export async function updateJobDescription(
       },
     });
 
-    await runAtsForAllResumes(clerkUserId, jobDescription.id);
+    after(async () => {
+      try {
+        await runAtsForAllResumes(clerkUserId, jobDescription.id);
+      } catch (err) {
+        console.error("[updateJobDescription] Background ATS failed:", err);
+      }
+    });
 
-    return { success: true, jobDescription };
+    return { success: true, jobDescription, atsScoringStarted: true };
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     return { success: false, error: message };

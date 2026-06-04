@@ -248,7 +248,7 @@ export function Sidebar() {
         })}
 
         {/* Upgrade button */}
-        {!collapsed && (
+        {/* {!collapsed && (
           <div className="mt-3 px-1">
             <Link
               href="/support"
@@ -264,7 +264,7 @@ export function Sidebar() {
               Upgrade to Pro
             </Link>
           </div>
-        )}
+        )} */}
 
         {/* Divider */}
         <div

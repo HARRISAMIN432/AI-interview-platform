@@ -16,20 +16,23 @@ export default async function SupportPage() {
     {
       icon: BookOpen,
       title: "Getting started",
-      description: "Upload a resume, add a job description, then start a mock interview.",
+      description:
+        "Upload a resume, add a job description, then start a mock interview.",
       href: "/dashboard",
     },
     {
       icon: MessageCircle,
       title: "Interview help",
-      description: "Review completed sessions under Interviews or open the full feedback report.",
+      description:
+        "Review completed sessions under Interviews or open the full feedback report.",
       href: "/interview",
     },
     {
       icon: Mail,
       title: "Contact",
-      description: "Email support@interviewpro.app for account or billing questions.",
-      href: "mailto:support@interviewpro.app",
+      description:
+        "Email harrisaminjutt@gmail.com for account or billing questions.",
+      href: "mailto:harrisaminjutt@gmail.com",
     },
   ];
 
@@ -69,7 +72,10 @@ export default async function SupportPage() {
               >
                 {title}
               </p>
-              <p className="text-xs" style={{ color: "#4a6a7a", lineHeight: 1.6 }}>
+              <p
+                className="text-xs"
+                style={{ color: "#4a6a7a", lineHeight: 1.6 }}
+              >
                 {description}
               </p>
             </div>

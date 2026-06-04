@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, Sparkles, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import {
   JobDescriptionFormSchema,
   type JobDescriptionFormInput,
@@ -87,17 +88,31 @@ export function JobDescriptionForm({
 
   function onSubmit(values: JobDescriptionFormInput) {
     startTransition(async () => {
-      const result = editingJob
-        ? await updateJobDescription(editingJob.id, clerkUserId, values)
-        : await createJobDescription(clerkUserId, values);
+      try {
+        const result = editingJob
+          ? await updateJobDescription(editingJob.id, clerkUserId, values)
+          : await createJobDescription(clerkUserId, values);
 
-      if (!result.success) {
-        alert(result.error);
-        return;
+        if (!result.success) {
+          toast.error(result.error ?? "Failed to save job description");
+          return;
+        }
+
+        toast.success(
+          editingJob ? "Job description updated" : "Job description saved",
+          {
+            description:
+              "ATS scoring is running in the background for your resumes.",
+          },
+        );
+
+        router.push(`/resume/job-descriptions?id=${result.jobDescription.id}`);
+        router.refresh();
+      } catch (err) {
+        const message =
+          err instanceof Error ? err.message : "Failed to save job description";
+        toast.error(message);
       }
-
-      router.push(`/resume/job-descriptions?id=${result.jobDescription.id}`);
-      router.refresh();
     });
   }
 
@@ -284,7 +299,11 @@ export function JobDescriptionForm({
           }}
         >
           {isPending && <Loader2 size={14} className="animate-spin" />}
-          {editingJob ? "Save changes" : "Save job description"}
+          {isPending
+            ? "Saving…"
+            : editingJob
+              ? "Save changes"
+              : "Save job description"}
         </button>
         {editingJob ? (
           <button
@@ -311,11 +330,10 @@ export function JobDescriptionForm({
           </Link>
         )}
       </div>
-      {editingJob && (
-        <p className="text-[10px]" style={{ color: "#3d6070" }}>
-          Saving runs ATS scoring against all parsed resumes.
-        </p>
-      )}
+      <p className="text-[10px]" style={{ color: "#3d6070" }}>
+        After save, ATS scores are generated in the background (check Resumes in
+        a minute).
+      </p>
     </form>
   );
 }

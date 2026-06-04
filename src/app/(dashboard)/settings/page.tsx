@@ -41,7 +41,8 @@ export default async function SettingsPage() {
             }}
           />
           <p className="text-sm" style={{ color: "#7a9aaa" }}>
-            Profile, security, and sign-out are managed through Clerk.
+            Manage your account settings, security preferences, and sign-in
+            options.
           </p>
         </div>
       </div>

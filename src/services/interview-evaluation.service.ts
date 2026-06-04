@@ -92,13 +92,29 @@ export async function evaluateInterviewAnswers(
       if (isSkippedAnswer(rawAnswer) || !rawAnswer.trim()) {
         evaluation = buildSkippedAnswerEvaluation();
       } else {
-        evaluation = await evaluateAnswer({
-          questionText: question.questionText,
-          questionType: question.questionType,
-          answerText: rawAnswer,
-          jobTitle,
-          jobCompany,
-        });
+        try {
+          evaluation = await evaluateAnswer({
+            questionText: question.questionText,
+            questionType: question.questionType,
+            answerText: rawAnswer,
+            jobTitle,
+            jobCompany,
+          });
+        } catch (err) {
+          console.error(
+            `[evaluateInterviewAnswers] Question ${question.id} evaluation failed:`,
+            err,
+          );
+          evaluation = {
+            score: 50,
+            feedback:
+              "Your answer was saved, but automated scoring could not complete for this question. Review it manually and try again in a future session.",
+            strengths: ["Answer submitted and recorded"],
+            improvements: [
+              "Retry this question with a structured, specific response",
+            ],
+          };
+        }
       }
 
       await prisma.interviewAnswer.upsert({
