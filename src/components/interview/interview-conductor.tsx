@@ -36,7 +36,10 @@ export function InterviewConductor({
           body: JSON.stringify({ totalSeconds }),
         });
         if (!res.ok) {
-          console.error("[InterviewConductor] Complete failed:", await res.text());
+          console.error(
+            "[InterviewConductor] Complete failed:",
+            await res.text(),
+          );
         }
       } catch (err) {
         console.error("[InterviewConductor] Complete request failed:", err);
@@ -237,28 +240,6 @@ export function InterviewConductor({
           />
         </div>
       </div>
-
-      {/* ── Previous answers summary (collapsed) ────────────────────────── */}
-      {state.answers.length > 0 && (
-        <div
-          className="mt-6 rounded-xl px-4 py-3"
-          style={{
-            background: "rgba(255,255,255,0.02)",
-            border: "1px solid #152636",
-          }}
-        >
-          <div className="flex items-center gap-2">
-            <CheckCircle2 size={13} color="#00e5a0" strokeWidth={2} />
-            <span
-              className="text-xs"
-              style={{ color: "#4a6a7a", fontFamily: "var(--font-dm-sans)" }}
-            >
-              {state.answers.length} answer
-              {state.answers.length !== 1 ? "s" : ""} saved
-            </span>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
