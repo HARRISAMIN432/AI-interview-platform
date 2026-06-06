@@ -118,27 +118,6 @@ export function Topbar() {
         borderBottom: "1px solid rgba(255,255,255,0.04)",
       }}
     >
-      {/* Left: breadcrumbs + tab-like nav */}
-      <div className="flex items-center gap-1">
-        {/* Tab navigation — matches the "My Documents / Recent Activity" in the design */}
-        <nav className="flex items-center gap-1">
-          {["My Documents", "Recent Activity"].map((tab, i) => (
-            <button
-              key={tab}
-              className={cn(
-                "px-4 py-1.5 text-sm font-medium rounded-lg transition-all duration-150",
-                i === 0
-                  ? "text-[#dff0ea] border-b-2 border-[#00e5a0]"
-                  : "text-[#3d6070] hover:text-[#8acfba]",
-              )}
-              style={{ fontFamily: "var(--font-dm-sans)" }}
-            >
-              {tab}
-            </button>
-          ))}
-        </nav>
-      </div>
-
       {/* Right: search + notifications + avatar */}
       <div className="flex items-center gap-3">
         {/* Search */}

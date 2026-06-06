@@ -2,10 +2,7 @@ import { SignUp } from "@clerk/nextjs";
 
 export default function SignUpPage() {
   return (
-    <div
-      className="flex min-h-screen"
-      style={{ backgroundColor: "#050d14", fontFamily: "'Syne', sans-serif" }}
-    >
+    <div className="flex min-h-screen" style={{ backgroundColor: "#050d14" }}>
       {/* ── LEFT PANEL ── */}
       <div
         className="hidden lg:flex flex-col justify-between w-[52%] relative overflow-hidden"
@@ -144,8 +141,8 @@ export default function SignUpPage() {
           <h1
             style={{
               fontSize: 58,
-              fontWeight: 800,
-              lineHeight: 1.0,
+              fontWeight: 600,
+              lineHeight: 1.2,
               letterSpacing: "-0.04em",
               color: "#e8faf4",
               margin: 0,
@@ -159,7 +156,7 @@ export default function SignUpPage() {
                 textShadow: "0 0 40px rgba(0,229,160,0.25)",
               }}
             >
-              journey.
+              Journey.
             </span>
             <br />
             Today.
@@ -171,7 +168,6 @@ export default function SignUpPage() {
               marginTop: 22,
               fontSize: 15.5,
               lineHeight: 1.65,
-              fontFamily: "'DM Sans', sans-serif",
             }}
           >
             Create your free account and get instant access to AI-driven mock
@@ -226,7 +222,6 @@ export default function SignUpPage() {
                   style={{
                     color: "#6a8a9a",
                     fontSize: 14,
-                    fontFamily: "'DM Sans', sans-serif",
                   }}
                 >
                   {feature}
@@ -286,7 +281,6 @@ export default function SignUpPage() {
                   fontSize: 13,
                   fontWeight: 600,
                   lineHeight: 1.2,
-                  fontFamily: "'DM Sans', sans-serif",
                 }}
               >
                 Joined by 12,000+ professionals
@@ -296,11 +290,8 @@ export default function SignUpPage() {
                   color: "#3d5a6e",
                   fontSize: 11.5,
                   marginTop: 3,
-                  fontFamily: "'DM Sans', sans-serif",
                 }}
-              >
-                Google · Amazon · Meta · Apple · Netflix
-              </div>
+              ></div>
             </div>
           </div>
         </div>
@@ -311,10 +302,9 @@ export default function SignUpPage() {
           style={{
             color: "#1e3040",
             fontSize: 11.5,
-            fontFamily: "'DM Sans', sans-serif",
           }}
         >
-          © 2024 Interview Pro AI · All rights reserved.
+          © 2026 Interview Pro AI · All rights reserved.
         </div>
       </div>
 
@@ -385,7 +375,6 @@ export default function SignUpPage() {
                 colorText: "#0f172a",
                 colorInputBackground: "#f8fafc",
                 borderRadius: "0.75rem",
-                fontFamily: "'DM Sans', sans-serif",
                 fontSize: "15px",
               },
               elements: {

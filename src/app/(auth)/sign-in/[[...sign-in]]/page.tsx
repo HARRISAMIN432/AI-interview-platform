@@ -2,10 +2,7 @@ import { SignIn } from "@clerk/nextjs";
 
 export default function SignInPage() {
   return (
-    <div
-      className="flex min-h-screen"
-      style={{ backgroundColor: "#050d14", fontFamily: "'Syne', sans-serif" }}
-    >
+    <div className="flex min-h-screen" style={{ backgroundColor: "#050d14" }}>
       {/* ── LEFT PANEL ── */}
       <div
         className="hidden lg:flex flex-col justify-between w-[52%] relative overflow-hidden"
@@ -219,7 +216,6 @@ export default function SignInPage() {
                     color: "#3d5a6e",
                     marginTop: 4,
                     letterSpacing: "0.04em",
-                    fontFamily: "'DM Sans', sans-serif",
                   }}
                 >
                   {s.label}
@@ -257,7 +253,6 @@ export default function SignInPage() {
                 color: "#7a9aaa",
                 fontSize: 13.5,
                 lineHeight: 1.65,
-                fontFamily: "'DM Sans', sans-serif",
                 fontStyle: "italic",
                 margin: 0,
               }}
@@ -296,7 +291,6 @@ export default function SignInPage() {
                     fontSize: 13,
                     fontWeight: 600,
                     lineHeight: 1,
-                    fontFamily: "'DM Sans', sans-serif",
                   }}
                 >
                   Ahmad R.
@@ -306,7 +300,6 @@ export default function SignInPage() {
                     color: "#3d5a6e",
                     fontSize: 11,
                     marginTop: 3,
-                    fontFamily: "'DM Sans', sans-serif",
                   }}
                 >
                   Software Engineer @ Google
@@ -322,10 +315,9 @@ export default function SignInPage() {
           style={{
             color: "#1e3040",
             fontSize: 11.5,
-            fontFamily: "'DM Sans', sans-serif",
           }}
         >
-          © 2024 Interview Pro AI · All rights reserved.
+          © 2026 Interview Pro AI · All rights reserved.
         </div>
       </div>
 
@@ -396,7 +388,6 @@ export default function SignInPage() {
                 colorText: "#0f172a",
                 colorInputBackground: "#f8fafc",
                 borderRadius: "0.75rem",
-                fontFamily: "'DM Sans', sans-serif",
                 fontSize: "15px",
               },
               layout: {
