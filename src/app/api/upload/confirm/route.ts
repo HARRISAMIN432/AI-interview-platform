@@ -7,18 +7,6 @@ import { ZodError } from "zod";
 import { SaveResumeMetadataSchema } from "@/lib/validators/upload";
 import { saveResumeMetadata } from "@/lib/actions/resume";
 
-/**
- * POST /api/upload/confirm
- *
- * Called by the client after the file has been successfully PUT to S3.
- * Persists the Resume record in the database.
- *
- * Request body:
- *   { fileName: string, s3Key: string, s3Url: string, fileSize: number }
- *
- * Response:
- *   { resume: Resume }
- */
 export async function POST(req: NextRequest) {
   try {
     // ── Auth ──────────────────────────────────────────────────────────────

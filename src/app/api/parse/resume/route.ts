@@ -7,23 +7,6 @@ import { ZodError } from "zod";
 import { ParseResumeSchema } from "@/lib/validators/upload";
 import { parseResumeById } from "@/services/pdf-parser.service";
 
-/**
- * POST /api/parse/resume
- *
- * Triggers PDF text extraction for an existing Resume record.
- *
- * Called automatically by the upload flow after S3 upload completes,
- * but can also be called manually to re-parse (idempotent).
- *
- * Request body:
- *   { resumeId: string }
- *
- * Response (success):
- *   { success: true, stats: { pageCount, charCount, wordCount } }
- *
- * Response (failure):
- *   { success: false, error: { code, message } }
- */
 export async function POST(req: NextRequest) {
   try {
     // ── Auth ──────────────────────────────────────────────────────────────
